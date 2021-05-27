@@ -18,11 +18,65 @@ beforeEach( async ()=>{
 });
 
 describe('Lottery',()=>{
-    it('Deploys Contract',()=>{
+    it('Deploys Contract ',()=>{
     
         assert.ok(lottery.options.address);
+
+    });
+let players;
+
+
+    it('Adds multiple players', async() =>{
+      await lottery.methods.enter().send({
+          from: accounts[0],
+          value: web3.utils.toWei('0.02', 'ether')
+          
+      });
+
+      await lottery.methods.enter().send({
+        from: accounts[1],
+        value: web3.utils.toWei('0.02', 'ether')
+        
+    });
+
+
+    
+
+       players= await lottery.methods.getPlayers().call({
+           from:accounts[0]
+       });
+      assert.strictEqual(players[0],accounts[0]);
+      assert.strictEqual(players[1],accounts[1]);
+      assert.strictEqual(2, players.length);
+    });
+
+    it('requires minimum ether to enter',async()=>{
+    try{
+
+        await lottery.methods.enter().send({
+            from: accounts[0],
+            value: web3.utils.toWei('0.02','ether')
+    
+        });
+        assert(false);
+
+    }
+    catch(err){
+        assert(err);
+    }
 
 
     });
 
+
+    
+
+
+   
+
+    
+    
+
 });
+
+  
